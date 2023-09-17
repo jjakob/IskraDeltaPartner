@@ -1,3 +1,5 @@
+# Iskra Delta Partner
+
 This is where I put all the things related to this computer that I found while repairing it that could be useful to others.
 
 ### Story
@@ -23,3 +25,10 @@ This is where I put all the things related to this computer that I found while r
 
 [ROM dumps]  
 [Disk and floppy images]  
+
+## License
+
+This work is licensed under a
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+All disk images and software they contain are not owned by me and I do not claim any authorship.
