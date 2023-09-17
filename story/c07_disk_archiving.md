@@ -1,0 +1,17 @@
+When I first got the computer in 2009 it would not boot. It always showed a disk error. While the disk still spun it was very loud (the platter bearings were likely bad).
+
+In 2023 I decided it was about time I at least archived it so if it even still worked, it wouldn't continue to degrade as the chances of recovering data from it would only fall.
+
+The first option I considered was using a MFM reader, something like the one sold at [http://www.pdp8online.com]. That option would be expensive though as I would need to by or make it. The blank PCB I could get relatively cheaply from the author himself, but I'd still need the rest of the components, plus a BeagleBone Black or Green, which would be the most expensive part of it. New ones sold for 80+ euros even on ebay, and there was almost no used ones available. I put a watched search into ebay until one got listed for 27 euros plus shipping, but I got outbid on that.
+
+Meanwhile I found a post from Marko Štamcar from the Computer History Museum in Ljubljana about them having the same drives that don't work, so I sent an e-mail to him to ask if they happened to have a MFM reader, to which he replied they did, and I was welcome to stop by. Unfortunately the museum is approximately 200km or 2 hours drive away, and I didn't have enough free time to get there.
+
+Then after months of thinking about it and maybe making plans to go to the museum one day or making a reader myself, I found that the SCSI emulator I planned to use - ZuluSCSI - had an initiator mode that supposedly took images of connected SCSI drives. This was less than ideal, since it required the Xebec to still read the disk correctly. I also took a look at the source code of the initiator mode and found that there was no way it would work with the Xebec S1410 as it wasn't SCSI standard and required a "Initialize Drive Parameters" command before any disk access commands, which set the correct C/H/S etc. information for the attached drive, and also had completely nonstandard sense codes and other differences in commands and responses. Well, SASI predates the SCSI standard, so that's just how it is.
+
+I thought it wouldn't be so hard to "hack" the code to work with it, so I did. The changes I made haven't yet been published, but I intend to at least publish them in my fork of ZuluSCSI-firmware, so that others can build the firmware and image their own Xebec drives too.
+
+It took a lot of tries to work out the bugs in the code, but at the end I got an almost perfect image of the entire drive, except just one sector that had an "ID Field Read Error". But as I inspected the image with hexdump, I saw that the sector was surrounded by lots of sectors of 0xe5, which is the default that CP/M initializes any unused bytes to. So to make cpmfsck a bit happier, I copied sector 108 (which was full of 0xe5) to sector 109. (cpmfsck still reported lots of errors, but they didn't seem serious, which would later be confirmed when I tried booting it).
+
+So after that and after I copied the image of the drive to ZuluSCSI's SD card, I tried booting from it, andit worked! I successfully booted first into the menu and then into CP/M.
+
+All was not well however, as after a reboot, it would not boot any more. If I let it cool off for at least 10 minutes, it would boot again, and keep working fine for hours, but wouldn't boot after any amount of hot or cold reboots. But this turned out to be a hardware fault on the CPU board, detailed in the next chapter.
